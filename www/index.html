@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Get Cell ID</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Displays information about current mobile connection.">
+		<meta name="author" content="Peter Rukavina">
+		<link href="style/headers.css" rel="stylesheet"><!-- From Gaia CSS, styling for headers. -->
+		<link href="style/lists.css" rel="stylesheet"><!-- From Gaia CSS, styling for lists. -->
+		<link href="style/buttons.css" rel="stylesheet"><!-- From Gaia CSS, styling for buttons. -->
+		<link href="style/status.css" rel="stylesheet"><!-- From Gaia CSS, styling for status messages. -->
+		<link href="style/cross_browser.css" rel="stylesheet"><!-- From Gaia CSS, enhances cross-browser compatibility. -->
+		<link href="style/util.css" rel="stylesheet"><!-- From Gaia CSS, various and sundry styles. -->
+		<link href="style/input_areas.css" rel="stylesheet"><!-- From Gaia CSS, styling for OpenCellID.org API key field. -->
+		<link href="style/switches.css" rel="stylesheet"><!-- From Gaia CSS, enables the 'Send to OpenCellID.org?' switch on settings. -->
+		<link href="style/responsive.css" rel="stylesheet"><!-- A hack that allows sizing on Geeksphone Peak to work properly. -->
+		<link href="style/cellid.css" rel="stylesheet"><!-- This is the local CSS, where we do local mucking about. -->
+	</head>
+	
+	<body role="application">
+	
+		<!-- Each "page" of the app is a "section". This one is the app's main page, which shows Cell ID information. -->	
+		<section role="region" id="list-view">
+			<header>
+				<!-- Put a "Settings" button flush-right in the header. -->
+			  <menu type="toolbar">
+					<button id="settings-btn"><span class="icon icon-config">Settings</span></button>
+				</menu>
+				<!-- App title appears in the header. -->
+				<h1>Get Cell ID</h1>
+			</header>
+			<article data-type="list">
+				<ul>
+					<!-- Place to display the network name returned by the API. Like "Bell" or "Rogers".
+					
+							 In this and the other items on this page, the 'data-type="list"' that this list 
+					     is wrapped in allows the use of the "aside" construct. The class="pack-end"
+					     makes the content within flush-right; the content below it is flush-left and there
+					     is one paragraph styling for the first paragraph and another, smaller type type,
+					     for the second paragraph. -->
+					<li>
+						<aside class="pack-end">
+							<p id="longName"></p>
+						</aside>
+						<p>Network</p>
+					</li>
+					<!-- Place to display the Cell ID returned by the API. Like "250014558". -->
+					<li>
+						<aside class="pack-end">
+							<p id="gsmCellId"></p>
+						</aside>
+						<p>Cell ID</p>
+					</li>
+					<!-- Place to display the MCC, MNC, and LAC returned by the API. Like "302/610/48000". -->
+					<li>
+						<aside class="pack-end">
+							<p id="network_identifiers"></p>
+						</aside>
+						<p>Identifiers</p>
+						<p>MCC/MNC/LAC</p>
+					</li>
+					<!-- Place to display the relative signal strength returned by the API. I *think* this is range of 0 to 100. -->
+					<li>
+						<aside class="pack-end">
+							<p id="relSignalStrength"></p>
+						</aside>
+						<p>Signal Strength</p>
+					</li>
+					<!-- Place to display a count of the number of reports sent to OpenCellID.org. -->
+					<li id="reportssent_wrapper">
+						<aside class="pack-end">
+							<p id="reportssent">0</p>
+						</aside>
+						<p>Reports Sent</p>
+					</li>					
+					<!-- Place to display the current location returned by the device GPS. -->
+					<li id="gpslocation">
+						<aside class="pack-end">
+							<p id="location">Finding...</p>
+						</aside>
+						<p>GPS Location</p>
+					</li>
+				</ul>
+			</article>
+	    <section role="status" id="statusmessage">
+		    <p id="statusmessagetext"></p>
+	    </section>
+		</section>
+
+		<!-- Each "page" of the app is a "section". This one is the settings page. -->	
+		<section role="region" id="settings-view" class="move-down">
+			<header>
+				<!-- Close icon appears flush-left in the header. -->
+				<button id="close-btn"><span class="icon icon-close">close</span></button>
+				<!-- Save button appears flush-right in the header. -->
+				<menu type="toolbar">
+					<button id="done-btn">save</button>
+				</menu>
+				<!-- App title appears in the header. -->
+				<h1>Settings</h1>
+			</header>
+			<article>
+			<form>
+				<div data-type="list">
+					<ul>
+						<li>
+							<aside>
+								<label>
+									<!-- Checkbox to allow toggling of whether user wants reports to go to OpenCellID.org.
+									     Originally I just had the field for the API key, and if it was present the
+									     reports got sent, but I thought it would be nice to have the option of leaving
+									     the key in place and toggling sending of reports off for situations where you
+									     still want the data, but don't want to pay data rates to upload it. -->
+									<input type="checkbox" id="send_to_opencellid">
+									<span></span>
+								</label>
+							</aside>
+							<p>Send to OpenCellID.org?</p>
+							<p>API key at <a href="http://opencellid.org/users/signup" target="_blank">OpenCellID.org</a></p>
+						</li>
+						<li>
+							<!-- Field for the OpenCellID.org key. -->
+							<input placeholder="OpenCellID.org API Key" id="opencellid" required="" type="text">
+						</li>
+					</ul>
+					<!-- Field for the OpenCellID.org update frequency. -->
+					<p>Update Frequency</p>
+					<select id="updatefrequency">
+						<option value="15000">15 seconds</option>
+						<option value="30000">30 seconds</option>
+						<option value="60000">60 seconds</option>
+						<option value="300000">5 minutes</option>
+						<option value="600000">10 minutes</option>
+					</select>
+					<p id="credits">This app uses <a href="http://zeptojs.com/" target="_blank">zepto.js</a>, <a href="http://momentjs.com/" target="_blank">moment.js</a> and 
+					the <a href="http://opencellid.org/api" target="_blank">OpenCellID.org API</a>. For more information or support, visit <a href="http://ruk.ca/app/getcellid" target="_blank">ruk.ca/app/getcellid</a>.</p>
+				</div>
+			</form>
+			</article>
+		</section>	
+		
+		<!-- Why are the JavaScripts down here?  Check out http://developer.yahoo.com/blogs/ydn/high-performance-sites-rule-6-move-scripts-bottom-7200.html -->
+		<script src="js/zepto.min.js"></script><!-- A lightweight jQuery replacement. From http://zeptojs.com/ -->
+		<script src="js/moment.min.js"></script><!-- An extremely lazy way to get the current data formatted.  Overkill. From http://momentjs.com/ -->
+		<script src="js/cellid.js"></script><!-- Local JavaScript. The guts of the app are in here. -->
+		
+	</body>
+</html>
