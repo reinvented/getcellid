@@ -54,7 +54,7 @@ function getCellID() {
     // See https://developer.mozilla.org/en-US/docs/Web/API/MozMobileConnection
 	var conn = window.navigator.mozMobileConnection;
     // If we weren't able to establish the connection, then display an error.
-	if (!conn || !conn.voice || !conn.voice.network) {
+	if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
         $("#statusmessagetext").html("Unable to get Cell ID information from your device's API. Perhaps it's not supported or you have no SIM inserted?");
         $("#statusmessage").show();
 	}
@@ -118,10 +118,10 @@ function noPositionFound() {
 function sendToOpenCellID() {
     // See https://developer.mozilla.org/en-US/docs/Web/API/MozMobileConnection
     // Could probably more efficiently integrate this with the getCellID function.
-  var conn = window.navigator.mozMobileConnection;
-  if (!conn || !conn.voice || !conn.voice.network) {
-    return;
-  }
+	var conn = window.navigator.mozMobileConnection;
+	if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
+	    return;
+	}
     else {
         // If we have a GPS latitude, and we have an OpenCellID.org key, and we checked "on" for sending reports, then...
         if ((currentPositionLatitude) && (localStorage.opencellid !== '') && (localStorage.send_to_opencellid === 'on')) {
