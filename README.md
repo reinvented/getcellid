@@ -5,6 +5,37 @@ This is an open web app, targetted at Firefox OS and tested initially on the Gee
 
 The app will also, optionally, upload this information to the [OpenCellID.org](http://opencellid.org) project via its API.
 
+How to Install
+--------------
+
+1. Connect your device via USB to a computer running Firefox and the [Firefox OS Simulator](https://addons.mozilla.org/en-US/firefox/addon/firefox-os-simulator/).
+2. Clone the repository to your local machine.
+3. From the [Firefox OS Simulator](https://addons.mozilla.org/en-US/firefox/addon/firefox-os-simulator/), click **Add Directory** and locate the manifest.webapp you just cloned.
+4. Push the app to your device ([more details here](https://marketplace.firefox.com/developers/docs/firefox_os_simulator)).
+
+How to Configure
+----------------
+
+Once the app is running, it should, as long as you have a SIM card in your device, immediately display your network, Cell ID and LAC, MCC and MNC information.
+
+To configure reporting to OpenCellID.org, you will need a free API key, which you can [request here](http://opencellid.org/users/signup). Once you have the API key, click on the Settings icon in the top left, check the "Send to OpenCellID.org" checkbox, and type the API key into the field beneath. You can then adjust the update frequency between once-every-15-seconds and once-every-10-minutes. 
+
+Save the settings and the device will request permission to access the GPS. Wait for a GPS position to be discovered (this can take anywhere from 10 seconds to 12 minutes depending on whether you have A-GPS enabled); you'll see the latitude and longitude on the main app screen once it has been obtained, and the app will start sending updates to OpenCellID.org.
+
+Is it working?
+--------------
+
+To confirm that your reports are getting to OpenCellID.org, in a desktop browser visit:
+
+	http://www.opencellid.org/measure/list?key=myApiKey 
+
+where **myApiKey** is the same API key you use for the app. If it's working, you should see a list of your reports, like:
+
+	<measures total="1374">
+		<measure lac="48000" measured_at="Thu Jun 13 18:06:00 +0200 2013" mcc="302" lat="46.23348006" signal="80" lon="-63.12701167" cellId="250014550" id="68326700" mnc="610"/>
+		<measure lac="48000" measured_at="Thu Jun 13 18:06:00 +0200 2013" mcc="302" lat="46.23348055" signal="80" lon="-63.12701358" cellId="250014550" id="68326753" mnc="610"/>
+	</measures>
+
 Data Usage
 ----------
 
