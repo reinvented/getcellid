@@ -22,6 +22,11 @@ To Do
 * Make the Cell ID "clickable", generating a query to the OpenCellID.org API that accepts a Cell ID and returns its guess of geolocation.
 * Make the use of the GPS smarter: if the device is idle on a bedstand overnight there's no need to leave the GPS on when this app is running, as it will just run the battery down. So perhaps use the cell ID itself, and/or the accelerometer, to detect a change in position and turn on the GPS only when we need it.
 
+Limitations
+-----------
+
+Getting cell ID information requires using the [Mobile Connection API](https://developer.mozilla.org/en-US/docs/WebAPI/Mobile_Connection), which requires the **mobileconnection** permission in the manfest, which, in turn, requires that the app be "certified" to be available in the Firefox Marketplace (or, indeed, to be made available as a user-installable packaged app). So, as things are now, this app's distribution will be difficult.
+
 Sources
 -------
 

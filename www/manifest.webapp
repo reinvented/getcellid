@@ -17,7 +17,7 @@
     "type": "certified",
     "permissions": {
         "systemXHR": { "description":"Update OpenCellID.org using data connection." },
-		    "mobileconnection": { "description":"Obtain information from the device about cell ID." },
-				"geolocation": { "description":"Obtain geolocation from the device GPS." }
+		"mobileconnection": { "description":"Obtain information from the device about cell ID." },
+		"geolocation": { "description":"Obtain geolocation from the device GPS." }
     }
 }
