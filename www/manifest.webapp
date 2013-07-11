@@ -14,10 +14,10 @@
     },
     "installs_allowed_from": ["*"],
     "default_locale": "en",
-    "type": "certified",
+    "type": "privileged",
     "permissions": {
     	"systemXHR": { "description":"Update OpenCellID.org using data connection." },
-		"mobileconnection": { "description":"Obtain information from the device about cell ID." },
+		"mobilenetwork": { "description":"Obtain information from the device about cell ID." },
 		"geolocation": { "description":"Obtain geolocation from the device GPS." }
     }
 }
