@@ -1,23 +1,31 @@
 {
-    "version": "0.5",
-    "name": "Get Cell ID",
-    "description": "Get mobile network cell ID information from device and, optionally, upload to OpenCellID.org.",
-    "launch_path": "/index.html",
-    "icons": {
-        "48": "/style/icons/getcellid-icon-30.png",
-        "60": "/style/icons/getcellid-icon-60.png",
-        "128": "/style/icons/getcellid-icon-128.png"
+  "version": "2.0",
+  "name": "Get Cell ID",
+  "description": "Get mobile network cell ID information from device and, optionally, upload to OpenCellID.org, Mozilla Location Services and/or your custom URL.",
+  "launch_path": "/index.html",
+  "icons": {
+    "48": "/style/icons/getcellid-icon-30.png",
+    "60": "/style/icons/getcellid-icon-60.png",
+    "128": "/style/icons/getcellid-icon-128.png"
+  },
+  "developer": {
+    "name": "Peter Rukavina",
+    "url": "http://ruk.ca/app/getcellid"
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en",
+  "type": "certified",
+  "permissions": {
+    "mobileconnection": {
+      "description": "Obtain information from the device about cell ID."
     },
-    "developer": {
-        "name": "Peter Rukavina",
-        "url": "http://ruk.ca/app/getcellid"
+    "systemXHR": {
+      "description": "Update using data connection."
     },
-    "installs_allowed_from": ["*"],
-    "default_locale": "en",
-    "type": "certified",
-    "permissions": {
-    	"systemXHR": { "description":"Update OpenCellID.org using data connection." },
-		"mobileconnection": { "description":"Obtain information from the device about cell ID." },
-		"geolocation": { "description":"Obtain geolocation from the device GPS." }
+    "geolocation": {
+      "description": "Obtain geolocation from the device GPS."
     }
+  }
 }

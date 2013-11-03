@@ -3,7 +3,7 @@ Get Cell ID
 
 This is an open web app, targetted at Firefox OS and tested initially on the Geeksphone Peak, that grabs the current cellular network ID (the MCC, MNC, LAC and Cell ID) and displays them.
 
-The app will also, optionally, upload this information to the [OpenCellID.org](http://opencellid.org) project via its API.
+The app will also, optionally, upload this information to  [OpenCellID.org](http://opencellid.org), [Mozilla Location Services](https://location.services.mozilla.com/) and/or a custom URL.
 
 How to Install
 --------------
@@ -18,9 +18,35 @@ How to Configure
 
 Once the app is running, it should, as long as you have a SIM card in your device, immediately display your network, Cell ID and LAC, MCC and MNC information.
 
-To configure reporting to OpenCellID.org, you will need a free API key, which you can [request here](http://opencellid.org/users/signup). Once you have the API key, click on the Settings icon in the top left, check the "Send to OpenCellID.org" checkbox, and type the API key into the field beneath. You can then adjust the update frequency between once-every-15-seconds and once-every-10-minutes. 
+### Mozilla Location Services Updates
 
-Save the settings and the device will request permission to access the GPS. Wait for a GPS position to be discovered (this can take anywhere from 10 seconds to 12 minutes depending on whether you have A-GPS enabled); you'll see the latitude and longitude on the main app screen once it has been obtained, and the app will start sending updates to OpenCellID.org.
+To configure reporting to Mozilla Location Services doesn't require an API at present; you can, however, enter an optional "Nickname" and you will then find that your reports appear on the [Leaderboard](https://location.services.mozilla.com/leaders) credited to you.
+
+### OpenCellID Updates
+
+To configure reporting to OpenCellID.org, you will need a free API key, which you can [request here](http://opencellid.org/users/signup). Once you have the API key, click on the Settings icon in the top left, check the "Send to OpenCellID.org" checkbox, and type the API key into the field beneath. 
+
+### Custom URL Updates
+
+To configure reporting to a custom URL of your choosing, enter the full URL.  The app will report to this URL using the [same parameters are OpenCellID.org](http://opencellid.org/api). Here's a small PHP script that you can use to parse and log these reports to a TSV file:
+
+	<?php
+	$fp = fopen("/data/getcellid/getcellid.log","a");
+	fwrite($fp,$_GET['measured_at'] . "\t");
+	fwrite($fp,$_GET['cellid'] . "\t");
+	fwrite($fp,$_GET['lac'] . "\t");
+	fwrite($fp,$_GET['mcc'] . "\t");
+	fwrite($fp,$_GET['mnc'] . "\t");
+	fwrite($fp,$_GET['signal'] . "\t");
+	fwrite($fp,$_GET['lat'] . "\t");
+	fwrite($fp,$_GET['lon'] . "\n");
+	fclose($fp);
+
+### Adjusting Update Frequency
+
+You can then adjust the update frequency for uploading data to the networks you have enable to a figure between once-every-5-seconds and once-every-30-minutes. 
+
+Save the settings and the device will request permission to access the GPS. Wait for a GPS position to be discovered (this can take anywhere from 10 seconds to 12 minutes depending on whether you have A-GPS enabled); you'll see the latitude and longitude on the main app screen once it has been obtained, and the app will start sending updates.
 
 Is it working?
 --------------
@@ -61,13 +87,13 @@ Getting cell ID information requires using the [Mobile Connection API](https://d
 Sources
 -------
 
-* [Zepto.js](http://zeptojs.com/)
+* [jQuery](http://jquery.com/)
+* [jQuery Mobile](http://jquerymobile.com/)
 * [Moment.js](http://momentjs.com/)
 * [Icon](http://vector.me/browse/195013/radio_wireless_tower_clip_art)
 
-Screenshots
------------
+Screenshot
+----------
 
 ![image](screenshots/getcellid-screenshot.png)
 
-![image](screenshots/getcellid-settings-screenshot.png)
