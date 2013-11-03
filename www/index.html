@@ -1,144 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Get Cell ID</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="Displays information about current mobile connection and optionally sends to OpenCellID, Mozilla Location Services and/or your custom URL.">
-		<meta name="author" content="Peter Rukavina">
-		<link href="style/jquery.mobile-1.3.2.min.css"rel="stylesheet">
-		<link href="style/cellid.css" rel="stylesheet"><!-- This is the local CSS, where we do local mucking about. -->
-	</head>
-	<body>
-	
-		<div data-role="page" id="list-view">
+    <head>
+        <meta charset="utf-8">
+        <title>Get Cell ID</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Displays information about current mobile connection and optionally sends to OpenCellID, Mozilla Location Services and/or your custom URL.">
+        <meta name="author" content="Peter Rukavina">
+        <link href="style/jquery.mobile-1.3.2.min.css"rel="stylesheet">
+        <link href="style/cellid.css" rel="stylesheet"><!-- This is the local CSS, where we do local mucking about. -->
+    </head>
+    <body>
+    
+        <div data-role="page" id="list-view">
 
-			<div data-role="header">
-				<h1>Get Cell ID</h1>
-				<a id="settings-btn" href="#settings-view" data-icon="gear" class="ui-btn-right">Settings</a>
-			</div>
+            <div data-role="header">
+                <h1>Get Cell ID</h1>
+                <a id="settings-btn" href="#settings-view" data-icon="gear" class="ui-btn-right">Settings</a>
+            </div>
 
-			<ul data-role="listview" data-inset="true" data-count-theme="e">
+            <ul data-role="listview" data-inset="true" data-count-theme="e">
 
-				<!-- Place to display the network name returned by the API. Like "Bell" or "Rogers". -->
-				<li data-role="list-divider">Cell Data</li>
+                <!-- Place to display the network name returned by the API. Like "Bell" or "Rogers". -->
+                <li data-role="list-divider">Cell Data</li>
 
-				<li>
-					<h2>Network</h2>
-					<h3 class="ui-li-aside" id="longName"></h3>
-				</li>
+                <li>
+                    <h2>Network</h2>
+                    <h3 class="ui-li-aside" id="longName"></h3>
+                </li>
 
-				<!-- Place to display the Cell ID returned by the API. Like "250014558". -->
-				<li>
-					<h2>Cell ID</h2>
-					<h3 class="ui-li-aside" id="gsmCellId"></h3>
-				</li>
+                <!-- Place to display the Cell ID returned by the API. Like "250014558". -->
+                <li>
+                    <h2>Cell ID</h2>
+                    <h3 class="ui-li-aside" id="gsmCellId"></h3>
+                </li>
 
-				<!-- Place to display the MCC, MNC, and LAC returned by the API. Like "302/610/48000". -->
-				<li>
-					<h2>Identifiers</h2>
-					<p>MCC/MNC/LAC</p>
-					<h3 class="ui-li-aside" id="network_identifiers"></h3>
-				</li>
+                <!-- Place to display the MCC, MNC, and LAC returned by the API. Like "302/610/48000". -->
+                <li>
+                    <h2>Identifiers</h2>
+                    <p>MCC/MNC/LAC</p>
+                    <h3 class="ui-li-aside" id="network_identifiers"></h3>
+                </li>
 
-				<!-- Place to display the relative signal strength returned by the API. I *think* this is range of 0 to 100. -->
-				<li>
-					<h2>Signal Strength</h2>
-					<h3 class="ui-li-aside" id="relSignalStrength"></h3>
-				</li>
+                <!-- Place to display the relative signal strength returned by the API. I *think* this is range of 0 to 100. -->
+                <li>
+                    <h2>Signal Strength</h2>
+                    <h3 class="ui-li-aside" id="relSignalStrength"></h3>
+                </li>
 
-				<li data-role="list-divider">Location Data</li>
+                <li data-role="list-divider">Location Data</li>
 
-				<!-- Place to display the current location returned by the device GPS. -->
-				<li id="gpslocation">
-					<h2>GPS Location</h2>
-					<h3 class="ui-li-aside" id="location">Finding...</h3>
-				</li>
+                <!-- Place to display the current location returned by the device GPS. -->
+                <li id="gpslocation">
+                    <h2>GPS Location</h2>
+                    <h3 class="ui-li-aside" id="location">Finding...</h3>
+                </li>
 
-				<li data-role="list-divider">Sending Statistics</li>
+                <li data-role="list-divider">Sending Statistics</li>
 
-				<!-- Place to display a count of the number of reports sent to OpenCellID.org. -->
-				<li>
-					<h2>OpenCellID</h2>
-					<h3 class="ui-li-aside" id="reportssent_opencellid"></h3>
-				</li>					
-				<li>
-					<h2>Mozilla</h2>
-					<h3 class="ui-li-aside" id="reportssent_mozilla"></h3>
-				</li>					
-				<li>
-					<h2>Custom URL</h2>
-					<h3 class="ui-li-aside" id="reportssent_myurl"></h3>
-				</li>					
-			</ul>
-		</div>
+                <!-- Place to display a count of the number of reports sent to OpenCellID.org. -->
+                <li>
+                    <h2>OpenCellID</h2>
+                    <h3 class="ui-li-aside" id="reportssent_opencellid"></h3>
+                </li>                   
+                <li>
+                    <h2>Mozilla</h2>
+                    <h3 class="ui-li-aside" id="reportssent_mozilla"></h3>
+                </li>                   
+                <li>
+                    <h2>Custom URL</h2>
+                    <h3 class="ui-li-aside" id="reportssent_myurl"></h3>
+                </li>                   
+            </ul>
+        </div>
 
-		<div data-role="page" id="settings-view">
+        <div data-role="page" id="settings-view">
 
-			<div data-role="header">
-				<h1>Settings</h1>
-				<button id="done-btn" data-icon="check" class="ui-btn-right">Save</button>
-			</div>
-			
-			<div data-role="content">
-				<div class="ui-field-contain">
-					<label for="send_to_mozilla">Send to Mozilla?</label>
-					<select name="send_to_mozilla" id="send_to_mozilla" data-role="slider">
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
-				</div>
-				<div class="ui-field-contain">
-					<label for="mozilla_nickname">Nickname:</label>
-					<input name="mozilla_nickname" id="mozilla_nickname" placeholder="Mozilla Nickname" value="" type="text">
-				</div>
+            <div data-role="header">
+                <h1>Settings</h1>
+                <button id="done-btn" data-icon="check" class="ui-btn-right">Save</button>
+            </div>
+            
+            <div data-role="content">
+                <div class="ui-field-contain">
+                    <label for="send_to_mozilla">Send to Mozilla?</label>
+                    <select name="send_to_mozilla" id="send_to_mozilla" data-role="slider">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div>
+                <div class="ui-field-contain">
+                    <label for="mozilla_nickname">Nickname:</label>
+                    <input name="mozilla_nickname" id="mozilla_nickname" placeholder="Mozilla Nickname" value="" type="text">
+                </div>
 
-				<div class="ui-field-contain">
-					<label for="send_to_opencellid">Send to OpenCellID.org?</label>
-					<select name="send_to_opencellid" id="send_to_opencellid" data-role="slider">
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
-				</div>
-				<div class="ui-field-contain">
-					<label for="opencellid">API Key:</label>
-					<input name="opencellid" id="opencellid" placeholder="OpenCellID.org API Key" value="" type="text">
-				</div>
+                <div class="ui-field-contain">
+                    <label for="send_to_opencellid">Send to OpenCellID.org?</label>
+                    <select name="send_to_opencellid" id="send_to_opencellid" data-role="slider">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div>
+                <div class="ui-field-contain">
+                    <label for="opencellid">API Key:</label>
+                    <input name="opencellid" id="opencellid" placeholder="OpenCellID.org API Key" value="" type="text">
+                </div>
 
-				<div class="ui-field-contain">
-					<label for="send_to_myurl">Send to custom URL?</label>
-					<select name="send_to_myurl" id="send_to_myurl" data-role="slider">
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
-				</div>
-				<div class="ui-field-contain">
-					<label for="myurl">Custom URL:</label>
-					<input name="myurl" id="myurl" placeholder="Custom URL" value="" type="text">
-				</div>
-				<div class="ui-field-contain">
-					<!-- Field for the update frequency. -->
-					<label for="updatefrequency">Update Frequency:</label>
-					<select id="updatefrequency">
-						<option value="5000">5 seconds</option>
-						<option value="15000">15 seconds</option>
-						<option value="30000">30 seconds</option>
-						<option value="60000">60 seconds</option>
-						<option value="300000">5 minutes</option>
-						<option value="600000">10 minutes</option>
-						<option value="1800000">30 minutes</option>
-					</select>
-				</div>
-				<p id="credits">This app uses <a href="http://jquery.com/" target="_blank">jQuery</a>, <a href="http://momentjs.com/" target="_blank">moment.js</a> and 
-				the <a href="https://wiki.mozilla.org/Services/Location" target="_blank">Mozilla Location Services</a> and <a href="http://opencellid.org/api" target="_blank">OpenCellID.org</a> APIs. For more information or support, visit <a href="http://ruk.ca/app/getcellid" target="_blank">ruk.ca/app/getcellid</a>.</p>
-			</div>
-		</div>	
-		
-		<!-- Why are the JavaScripts down here?  Check out http://developer.yahoo.com/blogs/ydn/high-performance-sites-rule-6-move-scripts-bottom-7200.html -->
-		<script src="js/jquery-1.10.2.min.js"></script>
-		<script src="js/jquery.mobile-1.3.2.min.js"></script>
-		<script src="js/moment.min.js"></script><!-- An extremely lazy way to get the current data formatted.  Overkill. From http://momentjs.com/ -->
-		<script src="js/cellid.js"></script><!-- Local JavaScript. The guts of the app are in here. -->
-		
-	</body>
+                <div class="ui-field-contain">
+                    <label for="send_to_myurl">Send to custom URL?</label>
+                    <select name="send_to_myurl" id="send_to_myurl" data-role="slider">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div>
+                <div class="ui-field-contain">
+                    <label for="myurl">Custom URL:</label>
+                    <input name="myurl" id="myurl" placeholder="Custom URL" value="" type="text">
+                </div>
+                <div class="ui-field-contain">
+                    <!-- Field for the update frequency. -->
+                    <label for="updatefrequency">Update Frequency:</label>
+                    <select id="updatefrequency">
+                        <option value="5000">5 seconds</option>
+                        <option value="15000">15 seconds</option>
+                        <option value="30000">30 seconds</option>
+                        <option value="60000">60 seconds</option>
+                        <option value="300000">5 minutes</option>
+                        <option value="600000">10 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                    </select>
+                </div>
+                <p id="credits">This app uses <a href="http://jquery.com/" target="_blank">jQuery</a>, <a href="http://momentjs.com/" target="_blank">moment.js</a> and 
+                the <a href="https://wiki.mozilla.org/Services/Location" target="_blank">Mozilla Location Services</a> and <a href="http://opencellid.org/api" target="_blank">OpenCellID.org</a> APIs. For more information or support, visit <a href="http://ruk.ca/app/getcellid" target="_blank">ruk.ca/app/getcellid</a>.</p>
+            </div>
+        </div>  
+        
+        <!-- Why are the JavaScripts down here?  Check out http://developer.yahoo.com/blogs/ydn/high-performance-sites-rule-6-move-scripts-bottom-7200.html -->
+        <script src="js/jquery-1.10.2.min.js"></script>
+        <script src="js/jquery.mobile-1.3.2.min.js"></script>
+        <script src="js/moment.min.js"></script><!-- An extremely lazy way to get the current data formatted.  Overkill. From http://momentjs.com/ -->
+        <script src="js/cellid.js"></script><!-- Local JavaScript. The guts of the app are in here. -->
+        
+    </body>
 </html>
