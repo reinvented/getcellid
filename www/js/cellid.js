@@ -1,6 +1,7 @@
 /**
 * Define global variables.
 */
+<<<<<<< HEAD
 var currentPosition 			= false; 	// We use this to store the human-readable geolocation returned by the GPS.
 var currentPositionLatitude 	= false; 	// And this is just the current latitude returned by the GPS.
 var currentPositionLongitude 	= false; 	// And as you might expect, this is the current longitude returned by the GPS.
@@ -13,6 +14,18 @@ var map 						= L.map('map').setView( [46.23527, -63.12958], 17);
 
 var	useDummyCell				= false; 	// Allows testing on Firefox on the desktop, where there is no GSM cell data (we use a dummy cell).
 var dummyCell					= { voice: { cell: {}, network: {} } };		// Object to store "dummy" cell data in.
+=======
+var currentPosition             = false;    // We use this to store the human-readable geolocation returned by the GPS.
+var currentPositionLatitude     = false;    // And this is just the current latitude returned by the GPS.
+var currentPositionLongitude    = false;    // And as you might expect, this is the current longitude returned by the GPS.
+var positionInterval            = false;    // We store a a "watch ID" when we set up navigator.geolocation.watchPosition so that we can reference it later.
+var updatefrequency             = 30000;    // The default, in milliseconds (30000 = 30 seconds) for update frequency to our networks.
+var updateinterval              = false;    // We store a "setInterval ID" when we set up window.setInterval so that we can reference it later.
+var reportssent                 = { 'reportssent_mozilla': 0, 'reportssent_opencellid': 0, 'reportssent_myurl' : 0 };       // A counter for the numbers of reports sent to our networks.
+
+var useDummyCell                = false;    // Allows testing on Firefox on the desktop, where there is no GSM cell data (we use a dummy cell).
+var dummyCell                   = { voice: { cell: {}, network: {} } };     // Object to store "dummy" cell data in.
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
 dummyCell.voice.type = 'gsm';
 dummyCell.voice.cell.gsmCellId = '250014562';
 dummyCell.voice.cell.gsmLocationAreaCode = '48000';
@@ -58,12 +71,13 @@ $(document).on("ready", function() {
     $("#updatefrequency").val(localStorage.updatefrequency);
     if (debug) { console.log("updatefrequency="+localStorage.updatefrequency); }
 
-	// Make the switches on the settings page into sliders; must do this before setting their values.
-	$('#send_to_myurl').slider();
-	$('#send_to_opencellid').slider();
-	$('#send_to_mozilla').slider();
+    // Make the switches on the settings page into sliders; must do this before setting their values.
+    $('#send_to_myurl').slider();
+    $('#send_to_opencellid').slider();
+    $('#send_to_mozilla').slider();
 
     // Check the boxes on the "Settings" page based on previously saved values.
+<<<<<<< HEAD
 	if (localStorage.send_to_myurl == 'on') {
 	    $('#send_to_myurl').val("on").slider("refresh");
 	    if (debug) { console.log("Send to Custom URL is ON."); }
@@ -77,6 +91,18 @@ $(document).on("ready", function() {
 	    if (debug) { console.log("Send to Mozilla is ON."); }
 	}
 	
+=======
+    if (localStorage.send_to_myurl == 'on') {
+        $('#send_to_myurl').val("on").slider("refresh");
+    }
+    if (localStorage.send_to_opencellid == 'on') {
+        $('#send_to_opencellid').val("on").slider("refresh");
+    }
+    if (localStorage.send_to_mozilla == 'on') {
+        $('#send_to_mozilla').val("on").slider("refresh");
+    }
+    
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
     // Get the current CellID and update the display 
     getCellID();
 
@@ -86,6 +112,7 @@ $(document).on("ready", function() {
     // Update the display every second with the current cell ID information.
     window.setInterval(getCellID,1000);
 
+<<<<<<< HEAD
 	$("#map-view").on("pageshow", function(event, ui){
 		$('#map').height( $(window).height() ); // it will still respect your css, mine uses it up to 85%
         $('#map').width( $(window).width() ); // as well as height
@@ -160,6 +187,59 @@ $(document).on("ready", function() {
 	});
 	
 
+=======
+    /**
+    * Handler for the tap on the "Done" button on the settings screen.
+    */
+    $('#done-btn').bind('click', function () {
+        // Store the OpenCellID.org API key in local storage.
+        window.localStorage.setItem("opencellid", $("#opencellid").val());
+        // Store the OpenCellID.org update frequency in local storage.
+        window.localStorage.setItem("updatefrequency", $("#updatefrequency").val());
+
+        // Store the Mozilla nickname in local storage.
+        window.localStorage.setItem("mozilla_nickname", $("#mozilla_nickname").val());
+
+        // Store the Mozilla nickname in local storage.
+        window.localStorage.setItem("myurl", $("#myurl").val());
+
+        // If the "Send to Mozilla" checkbox is checked, then...
+        if ($("#send_to_mozilla").val() == 'on' ) {
+            // Store the Mozilla checkbox setting, as "on", to local storage.
+            window.localStorage.setItem("send_to_mozilla", 'on');
+        } 
+        else {
+            window.localStorage.setItem("send_to_mozilla", '');
+        }
+
+        // If the "Send to OpenCellID.org" checkbox is checked, then...
+        if ($("#send_to_opencellid").val() == 'on') {
+            // Store the OpenCellID.org checkbox setting, as "on", to local storage.
+            window.localStorage.setItem("send_to_opencellid", 'on');
+        } 
+        else {
+            window.localStorage.setItem("send_to_opencellid", '');
+        }
+
+        // If the "Send to My URL" checkbox is checked, then...
+        if ($("#send_to_myurl").val() == 'on' ) {
+            // Store the Mozilla checkbox setting, as "on", to local storage.
+            window.localStorage.setItem("send_to_myurl", 'on');
+        } 
+        else {
+            window.localStorage.setItem("send_to_mozilla", '');
+        }
+
+        // Enable updates.
+        enableSending();
+        
+        // Do a single update right away so that user doesn't need to wait for the update interval.
+        sendToNetworks();
+
+        $.mobile.changePage( "#list-view");
+
+    });
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
 });
 
 /**
@@ -167,19 +247,19 @@ $(document).on("ready", function() {
 */
 function getCellID() {
 
-	if (useDummyCell) {
-		var conn = dummyCell;
-	}
-	else {
-	    var conn = navigator.mozMobileConnection;
-	}
+    if (useDummyCell) {
+        var conn = dummyCell;
+    }
+    else {
+        var conn = navigator.mozMobileConnection;
+    }
 
     // If we weren't able to establish the connection, then display an error.
-	if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
+    if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
         $("#statusmessagetext").html("Unable to get Cell ID information from your device's API. Perhaps it's not supported or you have no SIM inserted?");
         $("#statusmessage").show();
-	}
-	else {
+    }
+    else {
         // Update the main app screen with information about the cell we're connected to right now.
         $("#statusmessage").hide();
         $("#longName").html(conn.voice.network.longName);
@@ -239,16 +319,16 @@ function successGeolocation(position) {
     // Set up a watchPosition to constantly poll the device for its location. On success updatePosition gets called.
     positionInterval = navigator.geolocation.watchPosition(updatePosition, noPositionFound, { enableHighAccuracy: true, maximumAge: 0 });
 
-	// Send an initial send to networks when we get our geolocation
-	sendToNetworks();
+    // Send an initial send to networks when we get our geolocation
+    sendToNetworks();
 }
 
 /**
 * Error callback for geolocation. Right now we do, well, nothing.
 */
 function errorNoGeolocation(error) {
-	$("#statusmessagetext").html("Unable to get position from GPS. Is Geolocation turn on for your device?");
-	$("#statusmessage").show();
+    $("#statusmessagetext").html("Unable to get position from GPS. Is Geolocation turn on for your device?");
+    $("#statusmessage").show();
 }
 
 /**
@@ -278,6 +358,7 @@ function noPositionFound() {
 */
 function sendToNetworks() {
 
+<<<<<<< HEAD
     if (debug) { console.log("Sending to networks."); }
 
 	if (useDummyCell) {
@@ -288,10 +369,18 @@ function sendToNetworks() {
 	    if (debug) { console.log("Using real cell location."); }
 	    var conn = navigator.mozMobileConnection;
 	}
+=======
+    if (useDummyCell) {
+        var conn = dummyCell;
+    }
+    else {
+        var conn = navigator.mozMobileConnection;
+    }
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
 
-	if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
-	    return;
-	}
+    if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
+        return;
+    }
     else {
 
 		if (useDummyLocation) {
@@ -340,21 +429,30 @@ function sendToNetworks() {
         // If we have a GPS latitude, and we have an OpenCellID.org key, and we checked "on" for sending reports, then...
         if ((currentPositionLatitude) && (localStorage.opencellid !== '') && (localStorage.send_to_opencellid === 'on')) {
             var url = "http://www.opencellid.org/measure/add?key=" + localStorage.opencellid + "&cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format();
+<<<<<<< HEAD
 		    if (debug) { console.log("Updating OpenCellID.org."); }
 		    if (debug) { console.log("url=" + url); }
 			sendXHR(url,'GET',null,'reportssent_opencellid',null);
+=======
+            sendXHR(url,'GET',null,'reportssent_opencellid',null);
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
         }
         
         // If we have a GPS latitude, and we checked "on" for sending reports to my URL, then...
         if ((currentPositionLatitude) && (localStorage.myurl !== '') && (localStorage.send_to_opencellid === 'on')) {
             var url = localStorage.myurl + "?cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format();
+<<<<<<< HEAD
 		    if (debug) { console.log("Updating custom URL."); }
 		    if (debug) { console.log("url=" + url); }
 			sendXHR(url,'GET',null,'reportssent_myurl',null);
+=======
+            sendXHR(url,'GET',null,'reportssent_myurl',null);
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
         }
                 
         // If we have a GPS latitude, and we checked "on" for sending reports to Mozilla, then...
         if ((currentPositionLatitude) && (localStorage.send_to_mozilla === 'on')) {
+<<<<<<< HEAD
 			var item = {
 				lat: currentPositionLatitude,
 				lon: currentPositionLongitude,
@@ -391,12 +489,46 @@ function sendToNetworks() {
 		    if (debug) { console.log("url=" + url); }
 				
 			sendXHR(url,'POST',itemsPost,'reportssent_mozilla',extraheaders);
+=======
+            var item = {
+                lat: currentPositionLatitude,
+                lon: currentPositionLongitude,
+                time: moment().format(),
+                accuracy: currentPositionAccuracy,
+                altitude: currentPositionAltitude,
+                altitude_accuracy: currentPositionAltitudeAccuracy,
+                radio: "gsm",
+                cell: [
+                    {
+                        radio: conn.voice.type,
+                        mcc: conn.voice.network.mcc,
+                        mnc: conn.voice.network.mnc,
+                        lac: conn.voice.network.gsmLocationAreaCode,
+                        cid: conn.voice.cell.gsmCellId,
+                        signal: conn.voice.signalStrength
+                    }
+                ]
+            };
+            
+            items = [];
+            items.push(item);
+            
+            var itemsPost = JSON.stringify({items: items});
+
+            var url = "https://location.services.mozilla.com/v1/submit"
+            var extraheaders = [
+                    [ 'X-Nickname', localStorage.mozilla_nickname ],
+                    [ 'Content-Type', 'application/json' ] ];
+                    
+            sendXHR(url,'POST',itemsPost,'reportssent_mozilla',extraheaders);
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
         }
     }
 }
 
 function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
 
+<<<<<<< HEAD
 	if (debug) { console.log("sendXHR..."); }
 	if (debug) { console.log("url=" + url ); }
 	if (debug) { console.log("posttype=" + posttype ); }
@@ -432,4 +564,28 @@ function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
 	}	
 	
 	xhr.send(payload);
+=======
+    // Set up an XMLHttpRequest
+    var xhr = new XMLHttpRequest({mozSystem: true, responseType: 'json'});
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 204)) {
+            // Increment the counter of reports sent.
+            reportssent[updatecounter] = reportssent[updatecounter] + 1;
+            // Update the main app screen counter.
+            $('#' + updatecounter).html(reportssent[updatecounter]);
+        }
+        else if (xhr.readyState == 4 && xhr.status == 400) {
+            alert("Error sending to " + url);
+        }
+    }
+
+    xhr.open(posttype, url, true);
+    if (!extraheaders === null) {
+        extraheaders.forEach(function(entry) {
+            xhr.setRequestHeader(entry[0],entry[1]);
+        });
+    }   
+    xhr.send(payload);
+>>>>>>> b2499098bbea4c0bd033737127a74d1f996f239a
 }
