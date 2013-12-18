@@ -8,6 +8,8 @@ var positionInterval 			= false; 	// We store a a "watch ID" when we set up navi
 var updatefrequency 			= 30000; 	// The default, in milliseconds (30000 = 30 seconds) for update frequency to our networks.
 var updateinterval 				= false; 	// We store a "setInterval ID" when we set up window.setInterval so that we can reference it later.
 var reportssent					= { 'reportssent_mozilla': 0, 'reportssent_opencellid': 0, 'reportssent_myurl' : 0 }; 		// A counter for the numbers of reports sent to our networks.
+var	debug						= true;		// Send debugging information to console.log?
+var map 						= L.map('map').setView( [46.23527, -63.12958], 17);
 
 var	useDummyCell				= false; 	// Allows testing on Firefox on the desktop, where there is no GSM cell data (we use a dummy cell).
 var dummyCell					= { voice: { cell: {}, network: {} } };		// Object to store "dummy" cell data in.
@@ -19,27 +21,42 @@ dummyCell.voice.network.mnc = '610';
 dummyCell.voice.relSignalStrength = '83';
 dummyCell.voice.signalStrength = '1';
 
+var useDummyLocation			= false;
+
 /**
 * When the app is launched, run a bunch of initializing code.
 */
 $(document).on("ready", function() {
 
+	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery by <a href="http://cloudmade.com">CloudMade</a>'
+	}).addTo(map);
+
+    if (debug) { console.log("App Get Cell ID starting."); }
+
     // If we didn't previously save the update frequency, then put this into a localStorage item.
     if (localStorage.getItem("updatefrequency") === null) {
         window.localStorage.setItem("updatefrequency", updatefrequency);
     }
+
+    if (debug) { console.log("updatefrequency=" + localStorage.getItem("updatefrequency")); }
     
     // Update the Mozilla Location Services nickname value previously saved on the "Settings" page.
     $("#mozilla_nickname").val(localStorage.mozilla_nickname);
+    if (debug) { console.log("mozilla_nickname="+localStorage.mozilla_nickname); }
 
     // Update the OpenCellID.org API key value previously saved on the "Settings" page.
     $("#opencellid").val(localStorage.opencellid);
+    if (debug) { console.log("opencellid="+localStorage.opencellid); }
 
     // Update the custom URL value previously saved on the "Settings" page.
     $("#myurl").val(localStorage.myurl);
+    if (debug) { console.log("myurl="+localStorage.myurl); }
 
     // Update the update frequency value previously saved on the "Settings" page.
     $("#updatefrequency").val(localStorage.updatefrequency);
+    if (debug) { console.log("updatefrequency="+localStorage.updatefrequency); }
 
 	// Make the switches on the settings page into sliders; must do this before setting their values.
 	$('#send_to_myurl').slider();
@@ -49,12 +66,15 @@ $(document).on("ready", function() {
     // Check the boxes on the "Settings" page based on previously saved values.
 	if (localStorage.send_to_myurl == 'on') {
 	    $('#send_to_myurl').val("on").slider("refresh");
+	    if (debug) { console.log("Send to Custom URL is ON."); }
 	}
 	if (localStorage.send_to_opencellid == 'on') {
 	    $('#send_to_opencellid').val("on").slider("refresh");
+	    if (debug) { console.log("Send to OpenCellID is ON."); }
 	}
 	if (localStorage.send_to_mozilla == 'on') {
 	    $('#send_to_mozilla').val("on").slider("refresh");
+	    if (debug) { console.log("Send to Mozilla is ON."); }
 	}
 	
     // Get the current CellID and update the display 
@@ -66,47 +86,68 @@ $(document).on("ready", function() {
     // Update the display every second with the current cell ID information.
     window.setInterval(getCellID,1000);
 
+	$("#map-view").on("pageshow", function(event, ui){
+		$('#map').height( $(window).height() ); // it will still respect your css, mine uses it up to 85%
+        $('#map').width( $(window).width() ); // as well as height
+         map.invalidateSize(false);
+    });
+
 	/**
 	* Handler for the tap on the "Done" button on the settings screen.
 	*/
 	$('#done-btn').bind('click', function () {
 		// Store the OpenCellID.org API key in local storage.
 		window.localStorage.setItem("opencellid", $("#opencellid").val());
+		if (debug) { console.log("Storing opencellid="+$("#opencellid").val()); }
+		if (debug) { console.log("Retrieved opencellid="+localStorage.opencellid); }
+		
 		// Store the OpenCellID.org update frequency in local storage.
 		window.localStorage.setItem("updatefrequency", $("#updatefrequency").val());
+		if (debug) { console.log("Storing updatefrequency="+$("#updatefrequency").val()); }
+		if (debug) { console.log("Retrieved updatefrequency="+localStorage.updatefrequency); }
 
 		// Store the Mozilla nickname in local storage.
 		window.localStorage.setItem("mozilla_nickname", $("#mozilla_nickname").val());
+		if (debug) { console.log("Storing mozilla_nickname="+$("#mozilla_nickname").val()); }
+		if (debug) { console.log("Retrieved mozilla_nickname="+localStorage.mozilla_nickname); }
 
 		// Store the Mozilla nickname in local storage.
 		window.localStorage.setItem("myurl", $("#myurl").val());
+		if (debug) { console.log("Storing myurl="+$("#myurl").val()); }
+		if (debug) { console.log("Retrieved myurl="+localStorage.myurl); }
 
 		// If the "Send to Mozilla" checkbox is checked, then...
 		if ($("#send_to_mozilla").val() == 'on' ) {
 			// Store the Mozilla checkbox setting, as "on", to local storage.
 			window.localStorage.setItem("send_to_mozilla", 'on');
+			if (debug) { console.log("Storing send_to_mozilla=on"); }
 		} 
 		else {
 			window.localStorage.setItem("send_to_mozilla", '');
 		}
+		if (debug) { console.log("Retrieved send_to_mozilla="+localStorage.send_to_mozilla); }
 
 		// If the "Send to OpenCellID.org" checkbox is checked, then...
 		if ($("#send_to_opencellid").val() == 'on') {
 			// Store the OpenCellID.org checkbox setting, as "on", to local storage.
 			window.localStorage.setItem("send_to_opencellid", 'on');
+			if (debug) { console.log("Storing send_to_opencellid=on"); }
 		} 
 		else {
 			window.localStorage.setItem("send_to_opencellid", '');
 		}
+		if (debug) { console.log("Retrieved send_to_opencellid="+localStorage.send_to_opencellid); }
 
 		// If the "Send to My URL" checkbox is checked, then...
 		if ($("#send_to_myurl").val() == 'on' ) {
 			// Store the Mozilla checkbox setting, as "on", to local storage.
 			window.localStorage.setItem("send_to_myurl", 'on');
+			if (debug) { console.log("Storing send_to_myurl=on"); }
 		} 
 		else {
-			window.localStorage.setItem("send_to_mozilla", '');
+			window.localStorage.setItem("send_to_myurl", '');
 		}
+		if (debug) { console.log("Retrieved send_to_myurl="+localStorage.send_to_myurl); }
 
 		// Enable updates.
 		enableSending();
@@ -117,6 +158,8 @@ $(document).on("ready", function() {
 		$.mobile.changePage( "#list-view");
 
 	});
+	
+
 });
 
 /**
@@ -150,6 +193,8 @@ function getCellID() {
 * Enable sending reports to OpenCellID.org.
 */
 function enableSending() {
+
+    if (debug) { console.log("Enabling sending to networks."); }
 
     // Start tracking the device's location using the GPS. If the location is found, then the success callback, successGeolocation, is called.
     navigator.geolocation.getCurrentPosition(successGeolocation, errorNoGeolocation, { enableHighAccuracy: true, maximumAge: 0 });
@@ -233,10 +278,14 @@ function noPositionFound() {
 */
 function sendToNetworks() {
 
+    if (debug) { console.log("Sending to networks."); }
+
 	if (useDummyCell) {
+	    if (debug) { console.log("Using dummy cell location for testing."); }
 		var conn = dummyCell;
 	}
 	else {
+	    if (debug) { console.log("Using real cell location."); }
 	    var conn = navigator.mozMobileConnection;
 	}
 
@@ -245,15 +294,62 @@ function sendToNetworks() {
 	}
     else {
 
+		if (useDummyLocation) {
+		    if (debug) { console.log("Using dummy GPS location."); }
+			currentPositionLatitude = 46.233504;
+			currentPositionLongitude = -63.1274394;
+			currentPositionAccuracy = 1;
+			currentPositionAltitude = 0;
+			currentPositionAltitudeAccuracy = 1;
+			
+		}
+        
+        if (currentPositionLongitude) {
+        	if (debug) { console.log("Adding point to map at " + currentPositionLatitude + "," + currentPositionLongitude); }
+
+			var geojsonMarkerOptions = {
+					radius: 5,
+					fillColor: "#ff7800",
+					color: "#000",
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.8
+			};
+
+			var geojsonFeature = {
+				"type": "Feature",
+				"properties": {
+					"name": "Location",
+					"popupContent": conn.voice.cell.gsmCellId
+				},
+				"geometry": {
+					"type": "Point",
+					"coordinates": [currentPositionLongitude, currentPositionLatitude]
+				}
+			};
+			
+			L.geoJson(geojsonFeature, {
+		    	pointToLayer: function (feature, latlng) {
+		        	return L.circleMarker(latlng, geojsonMarkerOptions);
+		    	}
+			}).addTo(map);
+			
+			map.panTo(new L.LatLng(currentPositionLatitude, currentPositionLongitude));
+        }
+
         // If we have a GPS latitude, and we have an OpenCellID.org key, and we checked "on" for sending reports, then...
         if ((currentPositionLatitude) && (localStorage.opencellid !== '') && (localStorage.send_to_opencellid === 'on')) {
             var url = "http://www.opencellid.org/measure/add?key=" + localStorage.opencellid + "&cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format();
+		    if (debug) { console.log("Updating OpenCellID.org."); }
+		    if (debug) { console.log("url=" + url); }
 			sendXHR(url,'GET',null,'reportssent_opencellid',null);
         }
         
         // If we have a GPS latitude, and we checked "on" for sending reports to my URL, then...
         if ((currentPositionLatitude) && (localStorage.myurl !== '') && (localStorage.send_to_opencellid === 'on')) {
             var url = localStorage.myurl + "?cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format();
+		    if (debug) { console.log("Updating custom URL."); }
+		    if (debug) { console.log("url=" + url); }
 			sendXHR(url,'GET',null,'reportssent_myurl',null);
         }
                 
@@ -269,10 +365,10 @@ function sendToNetworks() {
 				radio: "gsm",
 				cell: [
 					{
-						radio: conn.voice.type,
+						radio: "gsm", // hard-coding this because "conn.voice.type" returns 'hspa', which is rejected by Mozilla
 						mcc: conn.voice.network.mcc,
 						mnc: conn.voice.network.mnc,
-						lac: conn.voice.network.gsmLocationAreaCode,
+						lac: conn.voice.cell.gsmLocationAreaCode,
 						cid: conn.voice.cell.gsmCellId,
 						signal: conn.voice.signalStrength
 					}
@@ -284,17 +380,29 @@ function sendToNetworks() {
 			
 			var itemsPost = JSON.stringify({items: items});
 
-            var url = "https://location.services.mozilla.com/v1/submit"
+            var url = "https://location.services.mozilla.com/v1/submit";
+            
 			var extraheaders = [
 					[ 'X-Nickname', localStorage.mozilla_nickname ],
-					[ 'Content-Type', 'application/json' ] ];
-					
+					[ 'Content-Type', 'application/json' ] 
+				];
+
+		    if (debug) { console.log("Updating Mozilla."); }
+		    if (debug) { console.log("url=" + url); }
+				
 			sendXHR(url,'POST',itemsPost,'reportssent_mozilla',extraheaders);
         }
     }
 }
 
 function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
+
+	if (debug) { console.log("sendXHR..."); }
+	if (debug) { console.log("url=" + url ); }
+	if (debug) { console.log("posttype=" + posttype ); }
+	if (debug) { console.log("payload=" + payload ); }
+	if (debug) { console.log("updatecounter=" + updatecounter ); }
+	if (debug) { console.log("extraheaders=" + extraheaders ); }
 
 	// Set up an XMLHttpRequest
 	var xhr = new XMLHttpRequest({mozSystem: true, responseType: 'json'});
@@ -307,15 +415,21 @@ function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
 			$('#' + updatecounter).html(reportssent[updatecounter]);
 		}
 		else if (xhr.readyState == 4 && xhr.status == 400) {
-			alert("Error sending to " + url);
+			if (debug) {
+				console.log("Error sending to " + url);
+				console.log("statusText=" + xhr.statusText);
+				console.log("responseText=" + xhr.responseText);
+			}
 		}
 	}
 
 	xhr.open(posttype, url, true);
-	if (!extraheaders === null) {
+	if (extraheaders) {
 		extraheaders.forEach(function(entry) {
 			xhr.setRequestHeader(entry[0],entry[1]);
+		    if (debug) { console.log("Sending extra header:" + entry[0] + "=" + entry[1] ); }
 		});
 	}	
+	
 	xhr.send(payload);
 }
