@@ -24,7 +24,9 @@ To configure reporting to Mozilla Location Services doesn't require an API at pr
 
 ### OpenCellID Updates
 
-To configure reporting to OpenCellID.org, you will need a free API key, which you can [request here](http://opencellid.org/users/signup). Once you have the API key, click on the Settings icon in the top left, check the "Send to OpenCellID.org" checkbox, and type the API key into the field beneath. 
+To configure reporting to OpenCellID.org, you will need a free API key, which you can [request here](http://opencellid.org/#&action=database.requestForApiKey). Once you have the API key, click on the Settings icon in the top left, check the "Send to OpenCellID.org" checkbox, and type the API key into the field beneath. 
+
+*If you signed up for an API key before the migration of OpenCellID to [ENAiKOON](https://www.enaikoon.com/) it appears that your key will continue to work without a need for update.*
 
 ### Custom URL Updates
 
@@ -53,14 +55,14 @@ Is it working?
 
 To confirm that your reports are getting to OpenCellID.org, in a desktop browser visit:
 
-	http://www.opencellid.org/measure/list?key=myApiKey 
+	http://www.opencellid.org/measure/list?key=myApiKey&format=xml
 
 where **myApiKey** is the same API key you use for the app. If it's working, you should see a list of your reports, like:
 
-	<measures total="1374">
-		<measure lac="48000" measured_at="Thu Jun 13 18:06:00 +0200 2013" mcc="302" lat="46.23348006" signal="80" lon="-63.12701167" cellId="250014550" id="68326700" mnc="610"/>
-		<measure lac="48000" measured_at="Thu Jun 13 18:06:00 +0200 2013" mcc="302" lat="46.23348055" signal="80" lon="-63.12701358" cellId="250014550" id="68326753" mnc="610"/>
-	</measures>
+	<rsp stat="ok">
+		<measure id="52a24f27e4b0864499c722f5" lat="46.23813682" lon="-63.1251563" mcc="302" mnc="262" lac="48000" cellid="2400123" created_at="1385039978000" measured_at="1385021974000" signal="77" rating="0" speed="0" direction="0"/>
+		<measure id="52a24f27e4b0864499c72329" lat="46.23801264" lon="-63.12450342" mcc="302" mnc="262" lac="48000" cellid="2414710" created_at="1385040019000" measured_at="1385022016000" signal="100" rating="0" speed="0" direction="0"/>
+	</rsp>
 
 Data Usage
 ----------

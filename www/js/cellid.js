@@ -29,9 +29,9 @@ var useDummyLocation			= false;
 */
 $(document).on("ready", function() {
 
-	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 18,
-		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery by <a href="http://cloudmade.com">CloudMade</a>'
+		attribution: 'Map data © OpenStreetMap contributors'
 	}).addTo(map);
 
     if (debug) { console.log("App Get Cell ID starting."); }
@@ -394,7 +394,7 @@ function sendToNetworks() {
     }
 }
 
-function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
+function 1(url,posttype,payload,updatecounter,extraheaders) {
 
 	if (debug) { console.log("sendXHR..."); }
 	if (debug) { console.log("url=" + url ); }
