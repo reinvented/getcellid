@@ -229,6 +229,12 @@ function successGeolocation(position) {
 
     // Current Altitude Accuracy.
     currentPositionAltitudeAccuracy = position.coords.altitudeAccuracy;
+    
+    // Current Speed
+    currentPositionSpeed = position.coords.speed;
+
+    // Current Heading
+    currentPositionHeading = position.coords.heading;
 
     // If we currently had a watchPosition setup, then clear it.
     if (positionInterval) {
@@ -338,7 +344,7 @@ function sendToNetworks() {
 
         // If we have a GPS latitude, and we have an OpenCellID.org key, and we checked "on" for sending reports, then...
         if ((currentPositionLatitude) && (localStorage.opencellid !== '') && (localStorage.send_to_opencellid === 'on')) {
-            var url = "http://www.opencellid.org/measure/add?key=" + localStorage.opencellid + "&cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format();
+            var url = "http://www.opencellid.org/measure/add?key=" + localStorage.opencellid + "&cellid=" + conn.voice.cell.gsmCellId + "&lac=" + conn.voice.cell.gsmLocationAreaCode + "&mcc=" + conn.voice.network.mcc + "&mnc=" + conn.voice.network.mnc + "&signal=" + conn.voice.relSignalStrength + "&lat=" + currentPositionLatitude + "&lon=" + currentPositionLongitude + "&measured_at=" + moment().format() + "&rating=" + currentPositionAccuracy + "&speed=" + currentPositionSpeed + "&direction=" + currentPositionHeading;
 		    if (debug) { console.log("Updating OpenCellID.org."); }
 		    if (debug) { console.log("url=" + url); }
 			sendXHR(url,'GET',null,'reportssent_opencellid',null);
@@ -394,7 +400,7 @@ function sendToNetworks() {
     }
 }
 
-function 1(url,posttype,payload,updatecounter,extraheaders) {
+function sendXHR(url,posttype,payload,updatecounter,extraheaders) {
 
 	if (debug) { console.log("sendXHR..."); }
 	if (debug) { console.log("url=" + url ); }
