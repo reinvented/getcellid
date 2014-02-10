@@ -166,11 +166,18 @@ $(document).on("ready", function() {
 */
 function getCellID() {
 
+	var conn;
+
     if (useDummyCell) {
-        var conn = dummyCell;
+        conn = dummyCell;
     }
     else {
-        var conn = navigator.mozMobileConnection;
+    	if ((conn = navigator.mozMobileConnection)) {
+    		console.log("Using navigator.mozMobileConnection to get cell ID (old API)");
+    	}
+    	else if ((conn = navigator.mozMobileConnections)) {
+	    	var conn = conn[0];
+    	}
     }
 
     // If we weren't able to establish the connection, then display an error.
