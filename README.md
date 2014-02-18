@@ -13,6 +13,15 @@ How to Install
 3. From the [Firefox OS Simulator](https://addons.mozilla.org/en-US/firefox/addon/firefox-os-simulator/), click **Add Directory** and locate the manifest.webapp you just cloned.
 4. Push the app to your device ([more details here](https://marketplace.firefox.com/developers/docs/firefox_os_simulator)).
 
+Note about GPS
+--------------
+
+For the app to send geolocation reports to [OpenCellID.org](http://opencellid.org), [Mozilla Location Services](https://location.services.mozilla.com/) or a custom URL obviously requires the device to know its geolocation using GPS.
+
+You may find that your device, even though equipped with a GPS, takes a really long time to return location [this Mozilla Hacks post can shed some light on this](https://hacks.mozilla.org/2013/10/who-moved-my-geolocation/). While the device is waiting to obtain a GPS postion, reports will not be sent and "Finding" will appear in the GPS Location field.
+
+Eventually, once a GPS geolocation is determined, reports will automatically start to flow.
+
 How to Configure
 ----------------
 
@@ -20,7 +29,7 @@ Once the app is running, it should, as long as you have a SIM card in your devic
 
 ### Mozilla Location Services Updates
 
-To configure reporting to Mozilla Location Services doesn't require an API at present; you can, however, enter an optional "Nickname" and you will then find that your reports appear on the [Leaderboard](https://location.services.mozilla.com/leaders) credited to you.
+To configure reporting to Mozilla Location Services doesn't require an API key at present; you can, however, enter an optional "Nickname" and you will then find that your reports appear on the [Leaderboard](https://location.services.mozilla.com/leaders) credited to you.
 
 ### OpenCellID Updates
 
