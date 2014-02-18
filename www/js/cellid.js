@@ -292,14 +292,17 @@ function sendToNetworks() {
 
     if (debug) { console.log("Sending to networks."); }
 
-	if (useDummyCell) {
-	    if (debug) { console.log("Using dummy cell location for testing."); }
-		var conn = dummyCell;
-	}
-	else {
-	    if (debug) { console.log("Using real cell location."); }
-	    var conn = navigator.mozMobileConnection;
-	}
+    if (useDummyCell) {
+        conn = dummyCell;
+    }
+    else {
+    	if ((conn = navigator.mozMobileConnection)) {
+    		console.log("Using navigator.mozMobileConnection to get cell ID (old API)");
+    	}
+    	else if ((conn = navigator.mozMobileConnections)) {
+	    	var conn = conn[0];
+    	}
+    }
 
     if (!conn || !conn.voice || !conn.voice.network || !conn.voice.cell ) {
         return;
@@ -313,7 +316,8 @@ function sendToNetworks() {
 			currentPositionAccuracy = 1;
 			currentPositionAltitude = 0;
 			currentPositionAltitudeAccuracy = 1;
-			
+			currentPositionSpeed = 0;
+			currentPositionHeading = 0;
 		}
         
         if (currentPositionLongitude) {
